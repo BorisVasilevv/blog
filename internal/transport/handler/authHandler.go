@@ -9,6 +9,7 @@ import (
 type userhttp struct {
 	Login    string `json:"login"`
 	Password string `json:"password"`
+	Role     string `json:"role"`
 }
 
 func RegisterUser(service service.AuthService) gin.HandlerFunc {
@@ -22,7 +23,7 @@ func RegisterUser(service service.AuthService) gin.HandlerFunc {
 			return
 		}
 
-		token, err := service.Register(c.Request.Context(), user.Login, user.Password)
+		token, err := service.Register(c.Request.Context(), user.Login, user.Password, user.Role)
 
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest,

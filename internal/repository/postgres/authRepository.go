@@ -10,6 +10,7 @@ import (
 type userDB struct {
 	Login    string `db:"login"`
 	Password string `db:"password"`
+	Role     string `db:"role"`
 }
 
 type _authRepo struct {
@@ -20,29 +21,29 @@ func NewRepo(db *db.Db) repository.AuthRepository {
 	return _authRepo{db}
 }
 
-func (repo _authRepo) GetUser(ctx context.Context, login, hashPassword string) (string, error) {
+func (repo _authRepo) GetUser(ctx context.Context, login, hashPassword string) (string, string, error) {
 	var user userDB
 
 	row := repo.PgConn.QueryRow(ctx, `SELECT * FROM public.user WHERE login=$1 AND pas=$2`, login, hashPassword)
 
 	if err := row.Scan(&user); err != nil {
-		return "", fmt.Errorf("не смогли получить юзера: %x", err)
+		return "", "", fmt.Errorf("не смогли получить юзера: %x", err)
 	}
-
-	return login, nil
+	var role = user.Role
+	return login, role, nil
 
 }
 
-func (repo _authRepo) Register(ctx context.Context, login, hashPassword string) (string, error) {
+func (repo _authRepo) Register(ctx context.Context, login, hashPassword string, role string) (string, string, error) {
 	_, err := repo.PgConn.Exec(
 		ctx,
-		`INSERT INTO public.user(login, pass) values ($1, $2)`,
-		login, hashPassword,
+		`INSERT INTO public.user(login, pass, role) values ($1, $2, $3)`,
+		login, hashPassword, role,
 	)
 
 	if err != nil {
-		return "", fmt.Errorf("не смогли создать: %x", err)
+		return "", "", fmt.Errorf("не смогли создать: %x", err)
 	}
 
-	return login, nil
+	return login, role, nil
 }

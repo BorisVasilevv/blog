@@ -17,8 +17,8 @@ func NewComService(repo repository.ComRepository) service.ComService {
 	return _comService{repo: repo}
 }
 
-func (comService _comService) CreateComment(ctx context.Context, post model.Comment) (int, error) {
-	id, err := comService.repo.CreateComment(ctx, post)
+func (comService _comService) CreateComment(ctx context.Context, comment model.Comment) (int, error) {
+	id, err := comService.repo.CreateComment(ctx, comment)
 
 	if err != nil {
 		slog.Error(err.Error())

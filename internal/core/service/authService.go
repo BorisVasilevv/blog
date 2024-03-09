@@ -27,11 +27,11 @@ func NewAuthService(repo repository.AuthRepository) service.AuthService {
 }
 
 func (service _authService) Register(ctx context.Context, login,
-	password string) (string, error) {
+	password string, role string) (string, error) {
 
 	hash := generatePassword(password)
 
-	userName, err := service.repo.Register(ctx, login, hash)
+	userName, role, err := service.repo.Register(ctx, login, hash, role)
 
 	if err != nil {
 		slog.Error(err.Error())

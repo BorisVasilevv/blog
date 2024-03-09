@@ -20,7 +20,7 @@ func CreateComment(service service.ComService) gin.HandlerFunc {
 		var comment handlerComment
 
 		login := c.GetString("user")
-		id_post := c.GetInt("id_post")
+		id_post := c.Param("id_post")
 
 		if err := c.BindJSON(&comment); err != nil {
 			c.AbortWithStatusJSON(http.StatusBadRequest,
@@ -29,7 +29,16 @@ func CreateComment(service service.ComService) gin.HandlerFunc {
 			return
 		}
 
-		comment.Id_post = id_post
+		NumberIdPost, err := strconv.Atoi(id_post)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверно передан id поста"})
+
+			return
+		}
+
+		comment.Id_post = NumberIdPost
 		comment.Author = login
 
 		id, err := service.CreateComment(c.Request.Context(), model.Comment(comment))
