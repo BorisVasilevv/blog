@@ -5,4 +5,5 @@ type Post struct {
 	Body     string
 	ImageURL string
 	Author   string
+	Likes    int
 }

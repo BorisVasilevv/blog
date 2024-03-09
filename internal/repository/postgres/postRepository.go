@@ -35,13 +35,35 @@ func (postRepository _postRepository) GetPost(ctx context.Context, postId int) (
 	var post dbModel.Post
 
 	err := postRepository.db.PgConn.QueryRow(ctx,
-		`SELECT p.title, p.body, p.image, p.author FROM public.post p WHERE p.id=$1`,
-		postId).Scan(&post.Title, &post.Body, &post.ImageURL, &post.Author)
+		`SELECT p.title, p.body, p.image, p.author, p.likes FROM public.post p WHERE p.id=$1`,
+		postId).Scan(&post.Title, &post.Body, &post.ImageURL, &post.Author, &post.Likes)
 
 	if err != nil {
 		return model.Post{}, fmt.Errorf("ошибка получения поста: %s", err.Error())
 	}
 
 	return model.Post(post), nil
+
+}
+
+func (postRepository _postRepository) LikePost(ctx context.Context, postId int) (model.Post, error) {
+
+	post, err := postRepository.GetPost(ctx, postId)
+
+	likes := post.Likes + 1
+	print(post.Likes)
+	_, err = postRepository.db.PgConn.Exec(ctx,
+		`UPDATE public.post SET likes=$2 WHERE id=$1`,
+		postId, likes)
+	if err != nil {
+		return model.Post{}, fmt.Errorf("ошибка изменения поста: %s", err.Error())
+	}
+	newPost, err := postRepository.GetPost(ctx, postId)
+
+	if err != nil {
+		return model.Post{}, fmt.Errorf("ошибка изменения поста: %s", err.Error())
+	}
+
+	return newPost, nil
 
 }

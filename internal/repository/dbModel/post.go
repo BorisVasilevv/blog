@@ -5,4 +5,5 @@ type Post struct {
 	Body     string `db:"body"`
 	ImageURL string `db:"image"`
 	Author   string `db:"author"`
+	Likes    int    `db:"likes"`
 }

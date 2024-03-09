@@ -14,6 +14,7 @@ type handlerPost struct {
 	Body     string `json:"body"`
 	ImageURL string `json:"image"`
 	Author   string `json:"author"`
+	Likes    int    `json:"likes"`
 }
 
 func CreatePost(service service.PostService) gin.HandlerFunc {
@@ -56,6 +57,35 @@ func GetPost(service service.PostService) gin.HandlerFunc {
 		}
 
 		post, err := service.GetPost(c.Request.Context(), numberId)
+
+		if err != nil {
+			slog.Error(err.Error())
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "ошибка получения поста"})
+
+			return
+
+		}
+
+		c.JSON(http.StatusOK, handlerPost(post))
+
+	}
+}
+
+func LikePost(service service.PostService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id")
+
+		numberId, err := strconv.Atoi(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверно передан id поста"})
+
+			return
+		}
+
+		post, err := service.LikePost(c.Request.Context(), numberId)
 
 		if err != nil {
 			slog.Error(err.Error())

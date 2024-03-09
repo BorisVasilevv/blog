@@ -31,3 +31,7 @@ func (postService _postService) CreatePost(ctx context.Context, post model.Post)
 func (postService _postService) GetPost(ctx context.Context, postId int) (model.Post, error) {
 	return postService.repo.GetPost(ctx, postId)
 }
+
+func (postService _postService) LikePost(ctx context.Context, postId int) (model.Post, error) {
+	return postService.repo.LikePost(ctx, postId)
+}
