@@ -14,3 +14,8 @@ type PostService interface {
 	CreatePost(ctx context.Context, post model.Post) (int, error)
 	GetPost(ctx context.Context, postId int) (model.Post, error)
 }
+
+type ComService interface {
+	CreateComment(ctx context.Context, comment model.Comment) (int, error)
+	GetComment(ctx context.Context, comId int) (model.Comment, error)
+}
