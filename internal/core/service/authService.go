@@ -42,6 +42,22 @@ func (service _authService) Register(ctx context.Context, login,
 
 }
 
+func (service _authService) LogIn(ctx context.Context, login,
+	password string) (string, error) {
+
+	hash := generatePassword(password)
+
+	userName, err := service.repo.LogIn(ctx, login, hash)
+
+	if err != nil {
+		slog.Error(err.Error())
+		return "", errors.New("не смогли найти пользователя")
+	}
+
+	return generateToken(userName)
+
+}
+
 func (service _authService) GenerateToken(ctx context.Context, login,
 	password string) (string, error) {
 	return "", nil

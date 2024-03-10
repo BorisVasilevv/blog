@@ -11,6 +11,7 @@ func InitRoutes(service service.AuthService, postService service.PostService, co
 	router := gin.New()
 
 	router.POST("/register", handler.RegisterUser(service))
+	router.POST("/authorization", handler.LogIn(service))
 
 	api := router.Group("/api", middleware.AuthMiddleware)
 	{
