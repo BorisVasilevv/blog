@@ -22,11 +22,12 @@ func (postRepository _postRepository) CreatePost(ctx context.Context, post model
 	var id int
 
 	err := postRepository.db.PgConn.QueryRow(ctx,
-		`INSERT INTO public.post(title, body, image, author) values ($1,$2,$3,$4) RETURNING id`,
+		`INSERT INTO public.post(title, body, image, author, likes) values ($1,$2,$3,$4,$5) RETURNING post_id`,
 		postDb.Title,
 		postDb.Body,
 		postDb.ImageURL,
-		postDb.Author).Scan(&id)
+		postDb.Author,
+		postDb.Likes).Scan(&id)
 
 	return id, err
 }
