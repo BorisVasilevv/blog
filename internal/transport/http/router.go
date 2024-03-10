@@ -15,13 +15,11 @@ func InitRoutes(service service.AuthService, postService service.PostService, co
 
 	api := router.Group("/api")
 	{
-		router.Group("/post")
-		{
-			api.POST("/post", handler.CreatePost(postService), middleware.AuthMiddleware)
-			api.GET("/post/:id", handler.GetPost(postService))
-			api.GET("/post/:id/like", handler.LikePost(postService))
-			api.POST("post/:id_post/comment", handler.CreateComment(comService))
-		}
+
+		api.POST("/post", handler.CreatePost(postService), middleware.AuthMiddleware)
+		api.GET("/post/:id", handler.GetPost(postService))
+		api.GET("/post/:id/like", handler.LikePost(postService))
+		api.POST("/post/:id_post/comment", handler.CreateComment(comService))
 
 		api.GET("/posts", handler.GetPosts(postService))
 		api.GET("/comment/:id", handler.GetComment(comService))
