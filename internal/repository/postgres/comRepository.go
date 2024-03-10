@@ -22,7 +22,7 @@ func (comRepository _comRepository) CreateComment(ctx context.Context, comment m
 	var id int
 
 	err := comRepository.db.PgConn.QueryRow(ctx,
-		`INSERT INTO public.comment(id_post, body, author) values ($1,$2,$3) RETURNING id`,
+		`INSERT INTO public.comment(id_post, body, author) values ($1,$2,$3) RETURNING post_id`,
 		comDb.Id_post,
 		comDb.Body,
 		comDb.Author).Scan(&id)
