@@ -79,7 +79,7 @@ func (postRepository _postRepository) LikePost(ctx context.Context, postId int) 
 	likes := post.Likes + 1
 	print(post.Likes)
 	_, err = postRepository.db.PgConn.Exec(ctx,
-		`UPDATE public.post SET likes=$2 WHERE id=$1`,
+		`UPDATE public.post SET likes=$2 WHERE post_id=$1`,
 		postId, likes)
 	if err != nil {
 		return model.Post{}, fmt.Errorf("ошибка изменения поста: %s", err.Error())
