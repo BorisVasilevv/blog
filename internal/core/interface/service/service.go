@@ -7,6 +7,7 @@ import (
 
 type AuthService interface {
 	Register(ctx context.Context, login, password string, role string) (string, error)
+	LogIn(ctx context.Context, login, password string) (string, error)
 	GenerateToken(ctx context.Context, login, password string) (string, error)
 }
 
