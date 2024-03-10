@@ -14,6 +14,7 @@ type AuthRepository interface {
 type PostRepository interface {
 	CreatePost(ctx context.Context, post model.Post) (int, error)
 	GetPost(ctx context.Context, postId int) (model.Post, error)
+	GetPosts(ctx context.Context) ([]model.Post, error)
 	LikePost(ctx context.Context, postId int) (model.Post, error)
 }
 

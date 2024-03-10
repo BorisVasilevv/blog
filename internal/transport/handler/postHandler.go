@@ -100,3 +100,25 @@ func LikePost(service service.PostService) gin.HandlerFunc {
 
 	}
 }
+
+func GetPosts(service service.PostService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		var result []handlerPost
+		posts, err := service.GetPosts(c.Request.Context())
+
+		if err != nil {
+			slog.Error(err.Error())
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "ошибка получения постов"})
+
+			return
+
+		}
+
+		for _, post := range posts {
+			result = append(result, handlerPost(post))
+		}
+		c.JSON(http.StatusOK, posts)
+
+	}
+}
