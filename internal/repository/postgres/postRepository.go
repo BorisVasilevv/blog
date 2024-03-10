@@ -35,7 +35,7 @@ func (postRepository _postRepository) GetPost(ctx context.Context, postId int) (
 	var post dbModel.Post
 
 	err := postRepository.db.PgConn.QueryRow(ctx,
-		`SELECT p.title, p.body, p.image, p.author, p.likes FROM public.post p WHERE p.id=$1`,
+		`SELECT p.title, p.body, p.image, p.author, p.likes FROM public.post p WHERE p.post_id=$1`,
 		postId).Scan(&post.Title, &post.Body, &post.ImageURL, &post.Author, &post.Likes)
 
 	if err != nil {
@@ -44,6 +44,32 @@ func (postRepository _postRepository) GetPost(ctx context.Context, postId int) (
 
 	return model.Post(post), nil
 
+}
+
+func (postRepository _postRepository) GetPosts(ctx context.Context) ([]model.Post, error) {
+	var posts []dbModel.Post
+
+	rows, err := postRepository.db.PgConn.Query(ctx, `SELECT p.title, p.body, p.image, p.author, p.likes FROM public.post p`)
+	if err != nil {
+		return _postModelDBtoProgram(posts), fmt.Errorf("ошибка получения постов: %s", err.Error())
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var post dbModel.Post
+
+		if err := rows.Scan(&post.Title, &post.Body, &post.ImageURL, &post.Author, &post.Likes); err != nil {
+			return nil, fmt.Errorf("ошибка сканирования поста: %s", err.Error())
+		}
+		posts = append(posts, post)
+
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("ошибка итерации постов: %s", err.Error())
+	}
+
+	return _postModelDBtoProgram(posts), nil
 }
 
 func (postRepository _postRepository) LikePost(ctx context.Context, postId int) (model.Post, error) {
@@ -65,5 +91,13 @@ func (postRepository _postRepository) LikePost(ctx context.Context, postId int) 
 	}
 
 	return newPost, nil
+}
 
+func _postModelDBtoProgram(postsDB []dbModel.Post) []model.Post {
+	var result []model.Post
+
+	for _, postDB := range postsDB {
+		result = append(result, model.Post(postDB))
+	}
+	return result
 }
