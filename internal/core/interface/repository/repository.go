@@ -8,6 +8,7 @@ import (
 type AuthRepository interface {
 	GetUser(ctx context.Context, login, hashPassword string) (string, string, error)
 	Register(ctx context.Context, login, hashPassword string, role string) (string, string, error)
+	LogIn(ctx context.Context, login, hashPassword string) (string, error)
 }
 
 type PostRepository interface {
