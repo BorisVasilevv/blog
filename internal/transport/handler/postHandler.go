@@ -119,6 +119,46 @@ func GetPosts(service service.PostService) gin.HandlerFunc {
 			result = append(result, handlerPost(post))
 		}
 		c.JSON(http.StatusOK, posts)
+	}
+}
+
+func ChangePost(service service.PostService) gin.HandlerFunc {
+	return func(context *gin.Context) {
+		id := context.Param("id")
+
+		numberId, err := strconv.Atoi(id)
+
+		if err != nil {
+			context.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверно передан id поста"})
+
+			return
+		}
+
+		var newPost handlerPost
+
+		login := context.GetString("user")
+
+		if err := context.BindJSON(&newPost); err != nil {
+			context.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверное тело запроса"})
+
+			return
+		}
+
+		newPost.Author = login
+
+		post, err := service.ChangePost(context.Request.Context(), numberId, model.Post(newPost))
+
+		if err != nil {
+			slog.Error(err.Error())
+
+			context.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "ошибка изменения поста"})
+
+			return
+		}
+
+		context.JSON(http.StatusOK, handlerPost(post))
 
 	}
 }

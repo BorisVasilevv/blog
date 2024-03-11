@@ -94,6 +94,21 @@ func (postRepository _postRepository) LikePost(ctx context.Context, postId int) 
 	return newPost, nil
 }
 
+func (postRepository _postRepository) ChangePost(ctx context.Context, postId int, newPost model.Post) (model.Post, error) {
+	var post dbModel.Post
+
+	err := postRepository.db.PgConn.QueryRow(ctx,
+		`UPDATE public.post p SET p.title=$1, p.body=$2, p.image=$3, p.author=$4 WHERE p.post_id=$5`,
+		newPost.Title, newPost.Body, newPost.ImageURL, newPost.Author, postId).Scan(&post.Title, &post.Body, &post.ImageURL, &post.Author, &post.Likes)
+
+	if err != nil {
+		return model.Post{}, fmt.Errorf("ошибка изменения поста: %s", err.Error())
+	}
+
+	return model.Post(post), nil
+
+}
+
 func _postModelDBtoProgram(postsDB []dbModel.Post) []model.Post {
 	var result []model.Post
 

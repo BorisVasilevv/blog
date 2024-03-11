@@ -20,6 +20,7 @@ func InitRoutes(service service.AuthService, postService service.PostService, co
 			api.GET("/post", handler.GetPosts(postService))
 			api.POST("/post", handler.CreatePost(postService), middleware.AuthMiddleware)
 			api.GET("/post/:id", handler.GetPost(postService))
+			api.PUT("/post/:id", handler.ChangePost(postService), middleware.AuthMiddleware)
 			api.GET("/post/:id/like", handler.LikePost(postService))
 			api.POST("/post/:id_post/comment", handler.CreateComment(comService))
 		}
