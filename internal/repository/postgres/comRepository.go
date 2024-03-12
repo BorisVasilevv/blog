@@ -34,7 +34,7 @@ func (comRepository _comRepository) GetComment(ctx context.Context, comId int) (
 	var comment dbModel.Comment
 
 	err := comRepository.db.PgConn.QueryRow(ctx,
-		`SELECT p.id_post, p.body, p.author FROM public.comment p WHERE p.comment_id=$1`,
+		`SELECT с.id_post, с.body, с.author FROM public.comment с WHERE с.comment_id=$1`,
 		comId).Scan(&comment.Id_post, &comment.Body, &comment.Author)
 
 	if err != nil {
