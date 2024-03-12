@@ -19,7 +19,7 @@ func CreateComment(service service.ComService) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		var comment handlerComment
 
-		//	login := c.GetString("user")
+		login := c.GetString("user")
 		id_post := c.Param("id_post")
 
 		if err := c.BindJSON(&comment); err != nil {
@@ -39,7 +39,7 @@ func CreateComment(service service.ComService) gin.HandlerFunc {
 		}
 
 		comment.Id_post = NumberIdPost
-		//	comment.Author = login
+		comment.Author = login
 
 		id, err := service.CreateComment(c.Request.Context(), model.Comment(comment))
 
