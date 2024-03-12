@@ -22,4 +22,5 @@ type PostService interface {
 type ComService interface {
 	CreateComment(ctx context.Context, comment model.Comment) (int, error)
 	GetComment(ctx context.Context, comId int) (model.Comment, error)
+	GetCommentsByPost(ctx context.Context, postId int) ([]model.Comment, error)
 }

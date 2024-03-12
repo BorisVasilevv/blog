@@ -77,6 +77,33 @@ func GetComment(service service.ComService) gin.HandlerFunc {
 		}
 
 		c.JSON(http.StatusOK, handlerComment(сomment))
+	}
+}
 
+func GetCommentsByPost(service service.ComService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		id := c.Param("id_post")
+
+		postId, err := strconv.Atoi(id)
+
+		if err != nil {
+			c.AbortWithStatusJSON(http.StatusBadRequest,
+				gin.H{"message": "неверно передан id поста"})
+
+			return
+		}
+
+		сomments, err := service.GetCommentsByPost(c.Request.Context(), postId)
+
+		if err != nil {
+			slog.Error(err.Error())
+
+			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "ошибка получения комментария"})
+
+			return
+
+		}
+
+		c.JSON(http.StatusOK, сomments)
 	}
 }

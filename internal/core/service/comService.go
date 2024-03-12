@@ -31,3 +31,7 @@ func (comService _comService) CreateComment(ctx context.Context, comment model.C
 func (comService _comService) GetComment(ctx context.Context, comId int) (model.Comment, error) {
 	return comService.repo.GetComment(ctx, comId)
 }
+
+func (comService _comService) GetCommentsByPost(ctx context.Context, postId int) ([]model.Comment, error) {
+	return comService.repo.GetCommentsByPost(ctx, postId)
+}
