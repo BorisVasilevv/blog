@@ -30,7 +30,21 @@ func (repo _authRepo) GetUser(ctx context.Context, login, hashPassword string) (
 }
 
 func (repo _authRepo) Register(ctx context.Context, login, hashPassword string, role string) (string, string, error) {
-	_, err := repo.PgConn.Exec(
+	var count int
+	row, err := repo.PgConn.Query(ctx, `SELECT count(*) FROM public.user WHERE login like $1`, login)
+
+	for row.Next() {
+		if err := row.Scan(&count); err != nil {
+			return "", "", fmt.Errorf("недопустимый логин пользователя пользователя: %s", err.Error())
+		}
+
+		if count != 0 {
+			return "", "", fmt.Errorf("пользователь с таким логином уже существует")
+		}
+
+	}
+
+	_, err = repo.PgConn.Exec(
 		ctx,
 		`INSERT INTO public.user(login, pass, role) values ($1, $2, $3)`,
 		login, hashPassword, role,

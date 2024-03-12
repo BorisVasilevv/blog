@@ -35,7 +35,7 @@ func (service _authService) Register(ctx context.Context, login,
 
 	if err != nil {
 		slog.Error(err.Error())
-		return "", errors.New("не смогли создать пользователя")
+		return "", errors.New("не смогли создать пользователя " + err.Error())
 	}
 
 	return generateToken(userName)
